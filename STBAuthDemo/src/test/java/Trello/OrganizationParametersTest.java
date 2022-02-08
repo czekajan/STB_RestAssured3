@@ -28,6 +28,16 @@ public class OrganizationParametersTest {
                 Arguments.of("This is display name", "This is description", "thisisname123", "123"));
     }
 
+    private static Stream<Arguments> createOrganizationWithInvalidData(){
+        return Stream.of(
+                Arguments.of("", "This is description", "this is name", "http.website.pl"),
+                Arguments.of(" This is display name", "This is description", "this is name", "website.pl"),
+                Arguments.of("This is display name", "This is description", "thi", "www.website.pl"),
+                Arguments.of("This is display name", "This is description", "this is name", "http://website.pl"),
+                Arguments.of("This is display name", "This is description", "th?", "http://website.pl"),
+                Arguments.of("This is display name", "This is description", "THISISNAME", "123"));
+    }
+
     @DisplayName("Create organization with valid data")  // opis testu
     @ParameterizedTest(name = "Display name: {0}, desc: {1}, name: {2}, website: {3}")    // test z parametrami
     @MethodSource("createOrganizationData")  // metoda z ktorej beda brane parametry
@@ -56,8 +66,8 @@ public class OrganizationParametersTest {
 
         given()
                 .contentType(ContentType.JSON)
-                .queryParam("KEY", KEY)
-                .queryParam("TOKEN", TOKEN)
+                .queryParam("key", key)
+                .queryParam("token", token)
                 .when()
                 .delete("https://api.trello.com/1/organizations" + "/" + organizationId)
                 .then()
