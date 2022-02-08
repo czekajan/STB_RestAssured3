@@ -18,7 +18,7 @@ public class OrganizationParametersTest {
     private final String KEY =  "KEY";
     private final String TOKEN = "TOKEN";
 
-    private static Stream<Arguments> createOrganizationData(){
+    private static Stream<Arguments> createOrganizationData() {
         return Stream.of(
                 Arguments.of("This is display name", "This is description", "this is name", "https://website.pl"),
                 Arguments.of("This is display name", "This is description", "this is name", "http://website.pl"),
@@ -28,7 +28,7 @@ public class OrganizationParametersTest {
                 Arguments.of("This is display name", "This is description", "thisisname123", "123"));
     }
 
-    private static Stream<Arguments> createOrganizationWithInvalidData(){
+    private static Stream<Arguments> createOrganizationWithInvalidData() {
         return Stream.of(
                 Arguments.of("", "This is description", "this is name", "http.website.pl"),
                 Arguments.of(" This is display name", "This is description", "this is name", "website.pl"),
@@ -38,10 +38,28 @@ public class OrganizationParametersTest {
                 Arguments.of("This is display name", "This is description", "THISISNAME", "123"));
     }
 
+    @DisplayName("Create organization with invalid data")
+    @ParameterizedTest(name = "Display name: {0}, desc: {1}, name: {2}, website: {3}")
+    @MethodSource("createOrganizationWithInvalidData")
+    public void createOrganizationWithInvalidData(String displayName, String desc, String name, String website){
+
+        given()
+                .spec(reqSpec)
+                .queryParam("displayName", displayName)
+                .queryParam("desc", desc)
+                .queryParam("name", name)
+                .queryParam("website", website)
+                .when()
+                .post("https://api.trello.com/1/organizations")
+                .then()
+                .statusCode(400);
+
+    }
+
     @DisplayName("Create organization with valid data")  // opis testu
     @ParameterizedTest(name = "Display name: {0}, desc: {1}, name: {2}, website: {3}")    // test z parametrami
     @MethodSource("createOrganizationData")  // metoda z ktorej beda brane parametry
-    public void createOrganization(String displayName, String desc, String name, String website){
+    public void createOrganization(String displayName, String desc, String name, String website) {
 
 
         Response response = given()
